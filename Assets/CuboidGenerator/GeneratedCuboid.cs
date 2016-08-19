@@ -129,20 +129,6 @@ namespace GeneratedCuboids
             renderer.sharedMaterials = materials;
         }
 
-        public void SetMaterial(Material material)
-        {
-            MeshRenderer renderer = GetComponent<MeshRenderer>();
-            Material[] materials = new Material[1];
-            materials[0] = material;
-            renderer.sharedMaterials = materials;
-        }
-
-        public Material GetMaterial()
-        {
-            MeshRenderer renderer = GetComponent<MeshRenderer>();
-            return renderer.sharedMaterials[0];
-        }
-
         public void MoveToColliderCenter(Vector3 newCenter)
         {
             transform.position = newCenter;

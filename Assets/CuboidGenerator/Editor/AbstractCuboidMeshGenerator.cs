@@ -9,12 +9,10 @@ namespace GeneratedCuboids
     {
         protected float x, y, z;
         protected float uvScale = 1;
-        protected Vector2 tempVec;
         protected Mesh mesh;
         protected List<Vector3> vertices;
         protected int[] tris;
         protected List<Vector2> uvs;
-        protected string uvCoordinates = "";
         protected GeneratedCuboid lastCreatedCuboid;
 
         protected abstract void CreateTopVertices(float xH, float yH, float zH);
@@ -178,8 +176,6 @@ namespace GeneratedCuboids
         private void CreateUVs()
         {
             uvs = new List<Vector2>();
-            uvCoordinates = "";
-
             AssignUVCoordinates();
         }
 
@@ -224,12 +220,6 @@ namespace GeneratedCuboids
         {
             MeshFilter meshFilter = newObj.AddComponent<MeshFilter>();
             meshFilter.sharedMesh = mesh;
-        }
-
-        protected string AddToUVs()
-        {
-            uvs.Add(tempVec);
-            return tempVec.x + "," + tempVec.y + Environment.NewLine;
         }
     }
 }

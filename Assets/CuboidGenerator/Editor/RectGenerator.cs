@@ -4,26 +4,25 @@ using System.Collections.Generic;
 
 namespace GeneratedCuboids
 {
-    public class CuboidGenerator : EditorWindow
+    public class RectGenerator : EditorWindow
     {
         private float x = DEFAULT_SIZE;
-        private float y = DEFAULT_SIZE;
         private float z = DEFAULT_SIZE;
+        private float colliderHeight = DEFAULT_SIZE;
         private int uvSize = 512;
         private bool generateUVMap = false;
-        private bool forceVerticalMap = false;
         private string output = "Cuboid will have the selected GameObject as a parent.";
 
-        private const int DEFAULT_SIZE = 10;
+        public const int DEFAULT_SIZE = 1;
         private const string SUCCESS_MESSAGE = "Cuboid is in your Scene, parent GameObject: ";
         private const string ROOT_NAME = "root";
         private const string DOT_SPACE = ". ";
 
-        [MenuItem("Window/CuboidGenerator")]
-        static void Init()
+        [MenuItem("GameObject/3D Object/Rect...")]
+        static void InitUnwindedUV()
         {
             // Get existing open window or if none, make a new one:  
-            EditorWindow window = EditorWindow.GetWindow(typeof(CuboidGenerator));
+            EditorWindow window = EditorWindow.GetWindow(typeof(RectGenerator));
             window.Show();
         }
 
@@ -35,26 +34,17 @@ namespace GeneratedCuboids
         private void DrawInputFields()
         {
             x = EditorGUI.FloatField(new Rect(0, 120, position.width, 15), "X", x);
-            y = EditorGUI.FloatField(new Rect(0, 140, position.width, 15), "Y", y);
-            z = EditorGUI.FloatField(new Rect(0, 160, position.width, 15), "Z", z);
-            forceVerticalMap = EditorGUI.Toggle(new Rect(0, 180, position.width, 15), "Force vertical mapping", forceVerticalMap);
+            z = EditorGUI.FloatField(new Rect(0, 140, position.width, 15), "Z", z);
+            colliderHeight = EditorGUI.FloatField(new Rect(0, 160, position.width, 15), "Collider Height", colliderHeight);
 
             generateUVMap = EditorGUI.Toggle(new Rect(0, 220, position.width, 15), "Generate UV Map", generateUVMap);
             uvSize = EditorGUI.IntField(new Rect(0, 240, position.width, 15), "UV size", uvSize);
 
-            if (GUILayout.Button("Create Cuboid"))
+            if (GUILayout.Button("Create Rect"))
             {
-                AbstractCuboidMeshGenerator meshGenerator;
-                if (forceVerticalMap)
-                {
-                    meshGenerator = new VerticalCuboidMeshGenerator(x, y, z);
-                }
-                else
-                {
-                    meshGenerator = AbstractCuboidMeshGenerator.ConstructOptimalGenerator(x, y, z);
-                }
+                RectMeshGenerator meshGenerator = new RectMeshGenerator(x, z, colliderHeight);
 
-                meshGenerator.CreateCuboid();
+                meshGenerator.CreateRect();
                 meshGenerator.CreateNewObject();
                 meshGenerator.SetParent(Selection.activeTransform);
                 List<Vector2> uvs = meshGenerator.GetUVs();
