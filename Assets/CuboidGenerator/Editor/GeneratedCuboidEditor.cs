@@ -8,8 +8,10 @@ namespace GeneratedCuboids
     [CustomEditor(typeof(GeneratedCuboid))]
     public class GeneratedCuboidEditor : Editor
     {
-        SerializedProperty xProperty, yProperty, zProperty;
-        private string output = "Use this to adjust the size of the cube";
+        private const string MESH_DIALOGUE_TITLE = "Delete mesh data";
+        private const string MESH_DIALOGUE_MESSAGE = "Do you want to delete the mesh data in your Assets?";
+        SerializedProperty xProperty, yProperty, zProperty, forceVerticalMapProperty;
+        private string output = string.Empty;
         private GeneratedCuboid[] targetCuboids;
         private GeneratedCuboid firstTargetCuboid;
 
@@ -18,6 +20,7 @@ namespace GeneratedCuboids
             xProperty = serializedObject.FindProperty("x");
             yProperty = serializedObject.FindProperty("y");
             zProperty = serializedObject.FindProperty("z");
+            forceVerticalMapProperty = serializedObject.FindProperty("forceVerticalMap");
 
             targetCuboids = System.Array.ConvertAll(targets, item => (GeneratedCuboid)item);
             firstTargetCuboid = targetCuboids[0];
@@ -37,10 +40,11 @@ namespace GeneratedCuboids
             EditorGUILayout.PropertyField(xProperty);
             EditorGUILayout.PropertyField(yProperty);
             EditorGUILayout.PropertyField(zProperty);
-            serializedObject.ApplyModifiedProperties();
 
             EditorGUILayout.Space();
-            firstTargetCuboid.ForceVerticalMap = EditorGUILayout.Toggle("Force vertical mapping", firstTargetCuboid.ForceVerticalMap);
+            EditorGUILayout.PropertyField(forceVerticalMapProperty);
+            serializedObject.ApplyModifiedProperties();
+            //firstTargetCuboid.ForceVerticalMap = EditorGUILayout.Toggle("Force vertical mapping", firstTargetCuboid.ForceVerticalMap);
 
             if (GUILayout.Button("Resize"))
             {
@@ -58,29 +62,22 @@ namespace GeneratedCuboids
                 }
             }
 
-            EditorGUILayout.Space();
-            firstTargetCuboid.UvSize = EditorGUILayout.IntField("UV size", firstTargetCuboid.UvSize);
-
-            if (GUILayout.Button("Generate UV Map"))
+            if (targetCuboids.Length == 1)
             {
-                GenerateUVMap(firstTargetCuboid);
+                EditorGUILayout.Space();
+                firstTargetCuboid.UvSize = EditorGUILayout.IntField("UV size", firstTargetCuboid.UvSize);
+
+                if (GUILayout.Button("Generate UV Map"))
+                {
+                    GenerateUVMap(firstTargetCuboid);
+                }
             }
 
             EditorGUILayout.Space();
-            GUILayout.Box(output);
-        }
 
-        private void ResizeToColliderBounds(GeneratedCuboid targetCuboid)
-        {
-            BoxCollider col = targetCuboid.GetComponent<BoxCollider>();
-            if (col != null)
+            if (!output.Equals(string.Empty))
             {
-                Vector3 newCenter = col.transform.TransformPoint(col.center);
-                xProperty.floatValue = col.size.x;
-                yProperty.floatValue = col.size.y;
-                zProperty.floatValue = col.size.z;
-                RecreateCuboid(targetCuboid);
-                targetCuboid.MoveToColliderCenter(newCenter);
+                GUILayout.Box(output);
             }
         }
 
@@ -103,6 +100,20 @@ namespace GeneratedCuboids
             }
         }
 
+        private void ResizeToColliderBounds(GeneratedCuboid targetCuboid)
+        {
+            BoxCollider col = targetCuboid.GetComponent<BoxCollider>();
+            if (col != null)
+            {
+                Vector3 newCenter = col.transform.TransformPoint(col.center);
+                xProperty.floatValue = col.size.x;
+                yProperty.floatValue = col.size.y;
+                zProperty.floatValue = col.size.z;
+                RecreateCuboid(targetCuboid);
+                targetCuboid.MoveToColliderCenter(newCenter);
+            }
+        }
+
         private void RecreateCuboidAndSetColliderCenter(GeneratedCuboid targetCuboid)
         {
             RecreateCuboid(targetCuboid);
@@ -116,14 +127,18 @@ namespace GeneratedCuboids
 
         private void RecreateCuboid(GeneratedCuboid targetCuboid)
         {
+            float x, y, z;
+            bool forceVertical;
+            AssignSizeValues(targetCuboid, out x, out y, out z, out forceVertical);
+
             AbstractCuboidMeshGenerator meshGenerator;
-            if (targetCuboid.ForceVerticalMap)
+            if (forceVertical)
             {
-                meshGenerator = new VerticalCuboidMeshGenerator(xProperty.floatValue, yProperty.floatValue, zProperty.floatValue);
+                meshGenerator = new VerticalCuboidMeshGenerator(x, y, z);
             }
             else
             {
-                meshGenerator = AbstractCuboidMeshGenerator.ConstructOptimalGenerator(xProperty.floatValue, yProperty.floatValue, zProperty.floatValue);
+                meshGenerator = AbstractCuboidMeshGenerator.ConstructOptimalGenerator(x, y, z);
             }
             meshGenerator.CreateCuboid();
             Mesh newMesh = meshGenerator.GetMesh();
@@ -132,6 +147,45 @@ namespace GeneratedCuboids
             AdaptCollider(targetCuboid, meshGenerator);
 
             targetCuboid.Uvs = meshGenerator.GetUVs();
+        }
+
+        private void AssignSizeValues(GeneratedCuboid targetCuboid, out float x, out float y, out float z, out bool forceVertical)
+        {
+            if (xProperty.hasMultipleDifferentValues)
+            {
+                x = targetCuboid.X;
+            }
+            else
+            {
+                x = xProperty.floatValue;
+            }
+
+            if (yProperty.hasMultipleDifferentValues)
+            {
+                y = targetCuboid.Y;
+            }
+            else
+            {
+                y = yProperty.floatValue;
+            }
+
+            if (zProperty.hasMultipleDifferentValues)
+            {
+                z = targetCuboid.Z;
+            }
+            else
+            {
+                z = zProperty.floatValue;
+            }
+
+            if(forceVerticalMapProperty.hasMultipleDifferentValues)
+            {
+                forceVertical = targetCuboid.ForceVerticalMap;
+            }
+            else
+            {
+                forceVertical = forceVerticalMapProperty.boolValue;
+            }
         }
 
         private void AdaptCollider(GeneratedCuboid targetCuboid, AbstractCuboidMeshGenerator meshGenerator)

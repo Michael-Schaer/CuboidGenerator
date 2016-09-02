@@ -64,7 +64,7 @@ namespace GeneratedCuboids
         /// <summary>
         /// Is used, when the Cuboid is generated the first time
         /// </summary>
-        public void CreateNewObject()
+        public GeneratedCuboid CreateNewObject()
         {
             GameObject newObj = new GameObject();
             newObj.name = "Cuboid";
@@ -76,6 +76,7 @@ namespace GeneratedCuboids
 
             AddMeshFilter(newObj);
             lastCreatedCuboid.AddMaterial(newObj);
+            return lastCreatedCuboid;
         }
 
         private void AssignMeshComponents()

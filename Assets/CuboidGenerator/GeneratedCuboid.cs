@@ -125,7 +125,9 @@ namespace GeneratedCuboids
         {
             MeshRenderer renderer = newObj.AddComponent<MeshRenderer>();
             Material[] materials = new Material[1];
-            materials[0] = new Material(Shader.Find("Standard"));
+            #if UNITY_EDITOR
+                materials[0] = UnityEditor.AssetDatabase.GetBuiltinExtraResource<Material>("Default-Material.mat");
+            #endif
             renderer.sharedMaterials = materials;
         }
 

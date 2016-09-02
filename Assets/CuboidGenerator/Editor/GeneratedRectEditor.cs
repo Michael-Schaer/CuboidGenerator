@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using System;
 
 namespace GeneratedCuboids
 {
@@ -9,7 +10,7 @@ namespace GeneratedCuboids
     public class GeneratedRectEditor : Editor
     {
         SerializedProperty xProperty, zProperty, heightProperty;
-        private string output = "Use this to adjust the size of the rect";
+        private string output = String.Empty;
         private GeneratedRect[] targetRects;
         private GeneratedRect firstTargetRect;
 
@@ -57,16 +58,22 @@ namespace GeneratedCuboids
                 }
             }
 
-            EditorGUILayout.Space();
-            firstTargetRect.UvSize = EditorGUILayout.IntField("UV size", firstTargetRect.UvSize);
-
-            if (GUILayout.Button("Generate UV Map"))
+            if (targetRects.Length == 1)
             {
-                GenerateUVMap(firstTargetRect);
-            }
+                EditorGUILayout.Space();
+                firstTargetRect.UvSize = EditorGUILayout.IntField("UV size", firstTargetRect.UvSize);
 
+                if (GUILayout.Button("Generate UV Map"))
+                {
+                    GenerateUVMap(firstTargetRect);
+                }
+            }
             EditorGUILayout.Space();
-            GUILayout.Box(output);
+
+            if (!output.Equals(string.Empty))
+            {
+                GUILayout.Box(output);
+            }
         }
 
         private void ResizeToColliderBounds(GeneratedRect targetRect)
@@ -115,7 +122,10 @@ namespace GeneratedCuboids
 
         private void RecreateRect(GeneratedRect targetRect)
         {
-            RectMeshGenerator meshGenerator = new RectMeshGenerator(xProperty.floatValue, zProperty.floatValue, heightProperty.floatValue);
+            float x, z, height;
+            AssignSizeValues(targetRect, out x, out z, out height);
+
+            RectMeshGenerator meshGenerator = new RectMeshGenerator(x, z, height);
             meshGenerator.CreateRect();
             Mesh newMesh = meshGenerator.GetMesh();
 
@@ -123,6 +133,36 @@ namespace GeneratedCuboids
             AdaptCollider(targetRect, meshGenerator);
 
             targetRect.Uvs = meshGenerator.GetUVs();
+        }
+
+        private void AssignSizeValues(GeneratedRect targetRect, out float x, out float z, out float height)
+        {
+            if (xProperty.hasMultipleDifferentValues)
+            {
+                x = targetRect.X;
+            }
+            else
+            {
+                x = xProperty.floatValue;
+            }
+
+            if (zProperty.hasMultipleDifferentValues)
+            {
+                z = targetRect.Z;
+            }
+            else
+            {
+                z = zProperty.floatValue;
+            }
+
+            if (heightProperty.hasMultipleDifferentValues)
+            {
+                height = targetRect.ColliderHeight;
+            }
+            else
+            {
+                height = heightProperty.floatValue;
+            }
         }
 
         private void AdaptCollider(GeneratedRect targetRect, RectMeshGenerator meshGenerator)

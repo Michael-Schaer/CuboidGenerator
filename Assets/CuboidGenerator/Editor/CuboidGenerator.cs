@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
+using System.IO;
 
 namespace GeneratedCuboids
 {
@@ -44,39 +45,44 @@ namespace GeneratedCuboids
 
             if (GUILayout.Button("Create Cuboid"))
             {
-                AbstractCuboidMeshGenerator meshGenerator;
-                if (forceVerticalMap)
-                {
-                    meshGenerator = new VerticalCuboidMeshGenerator(x, y, z);
-                }
-                else
-                {
-                    meshGenerator = AbstractCuboidMeshGenerator.ConstructOptimalGenerator(x, y, z);
-                }
-
-                meshGenerator.CreateCuboid();
-                meshGenerator.CreateNewObject();
-                meshGenerator.SetParent(Selection.activeTransform);
-                List<Vector2> uvs = meshGenerator.GetUVs();
-
-                if (Selection.activeTransform == null)
-                {
-                    output = SUCCESS_MESSAGE + ROOT_NAME + DOT_SPACE;
-                }
-                else
-                {
-                    output = SUCCESS_MESSAGE + Selection.activeTransform.gameObject.name + DOT_SPACE;
-                }
-
-                if (generateUVMap)
-                {
-                    UVBitmapGenerator generator = new UVBitmapGenerator();
-                    output += generator.StoreUVMap(uvs, uvSize);
-                    AssetDatabase.Refresh();
-                }
+                CreateCuboid();
             }
 
             GUILayout.Box(output);
+        }
+
+        private void CreateCuboid()
+        {
+            AbstractCuboidMeshGenerator meshGenerator;
+            if (forceVerticalMap)
+            {
+                meshGenerator = new VerticalCuboidMeshGenerator(x, y, z);
+            }
+            else
+            {
+                meshGenerator = AbstractCuboidMeshGenerator.ConstructOptimalGenerator(x, y, z);
+            }
+
+            meshGenerator.CreateCuboid();
+            meshGenerator.CreateNewObject();
+            meshGenerator.SetParent(Selection.activeTransform);
+            List<Vector2> uvs = meshGenerator.GetUVs();
+
+            if (Selection.activeTransform == null)
+            {
+                output = SUCCESS_MESSAGE + ROOT_NAME + DOT_SPACE;
+            }
+            else
+            {
+                output = SUCCESS_MESSAGE + Selection.activeTransform.gameObject.name + DOT_SPACE;
+            }
+
+            if (generateUVMap)
+            {
+                UVBitmapGenerator generator = new UVBitmapGenerator();
+                output += generator.StoreUVMap(uvs, uvSize);
+                AssetDatabase.Refresh();
+            }
         }
     }
 }
