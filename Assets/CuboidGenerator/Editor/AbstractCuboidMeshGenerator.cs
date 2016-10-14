@@ -102,23 +102,31 @@ namespace GeneratedCuboids
             vertices.Add(new Vector3(xH, -yH, zH)); //3
 
             //front
-            vertices.Add(new Vector3(-xH, yH, -zH)); //4
-            vertices.Add(new Vector3(xH, yH, -zH)); //5
+            vertices.Add(new Vector3(-xH, -yH, -zH)); //4
+            vertices.Add(new Vector3(xH, -yH, -zH)); //5
+            vertices.Add(new Vector3(-xH, yH, -zH)); //6
+            vertices.Add(new Vector3(xH, yH, -zH)); //7
 
             //top
             CreateTopVertices(xH, yH, zH);
 
             //back
-            vertices.Add(new Vector3(-xH, yH, zH)); //8
-            vertices.Add(new Vector3(xH, yH, zH)); //9
+            vertices.Add(new Vector3(-xH, yH, zH)); //12
+            vertices.Add(new Vector3(xH, yH, zH)); //13
+            vertices.Add(new Vector3(-xH, -yH, zH)); //14
+            vertices.Add(new Vector3(xH, -yH, zH)); //15
 
             //left
-            vertices.Add(new Vector3(-xH, yH, -zH)); // 10
-            vertices.Add(new Vector3(-xH, yH, zH)); // 11
+            vertices.Add(new Vector3(-xH, yH, -zH)); // 16
+            vertices.Add(new Vector3(-xH, yH, zH)); // 17
+            vertices.Add(new Vector3(-xH, -yH, -zH)); // 18
+            vertices.Add(new Vector3(-xH, -yH, zH)); // 19
 
             //right
-            vertices.Add(new Vector3(xH, yH, -zH)); // 12
-            vertices.Add(new Vector3(xH, yH, zH)); // 13
+            vertices.Add(new Vector3(xH, yH, -zH)); // 20
+            vertices.Add(new Vector3(xH, yH, zH)); // 21
+            vertices.Add(new Vector3(xH, -yH, -zH)); // 22
+            vertices.Add(new Vector3(xH, -yH, zH)); // 23
         }
 
         private void CreateTris()
@@ -135,43 +143,43 @@ namespace GeneratedCuboids
             tris[5] = 1;
 
             //front
-            tris[6] = 0;
-            tris[7] = 4;
-            tris[8] = 1;
+            tris[6] = 4;
+            tris[7] = 6;
+            tris[8] = 7;
 
             tris[9] = 5;
-            tris[10] = 1;
-            tris[11] = 4;
+            tris[10] = 4;
+            tris[11] = 7;
 
             //top
             CreateTopTris();
 
             //back
-            tris[18] = 2;
-            tris[19] = 3;
-            tris[20] = 8;
+            tris[18] = 14;
+            tris[19] = 15;
+            tris[20] = 12;
 
-            tris[21] = 9;
-            tris[22] = 8;
-            tris[23] = 3;
+            tris[21] = 13;
+            tris[22] = 12;
+            tris[23] = 15;
 
             //left
-            tris[24] = 10;
-            tris[25] = 0;
-            tris[26] = 11;
+            tris[24] = 16;
+            tris[25] = 18;
+            tris[26] = 17;
 
-            tris[27] = 2;
-            tris[28] = 11;
-            tris[29] = 0;
+            tris[27] = 19;
+            tris[28] = 17;
+            tris[29] = 18;
 
             //right
-            tris[30] = 1;
-            tris[31] = 12;
-            tris[32] = 3;
+            tris[30] = 22;
+            tris[31] = 20;
+            tris[32] = 23;
 
-            tris[33] = 13;
-            tris[34] = 3;
-            tris[35] = 12;
+            tris[33] = 21;
+            tris[34] = 23;
+            tris[35] = 20;
         }
 
         private void CreateUVs()

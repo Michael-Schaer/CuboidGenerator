@@ -10,19 +10,21 @@ namespace GeneratedCuboids
 
         protected override void CreateTopVertices(float xH, float yH, float zH)
         {
-            vertices.Add(new Vector3(-xH, yH, -zH)); //6
-            vertices.Add(new Vector3(-xH, yH, zH)); //7
+            vertices.Add(new Vector3(-xH, yH, -zH)); //8
+            vertices.Add(new Vector3(-xH, yH, zH)); //9
+            vertices.Add(new Vector3(xH, yH, -zH)); //10
+            vertices.Add(new Vector3(xH, yH, zH)); //11
         }
 
         protected override void CreateTopTris()
         {
-            tris[12] = 13;
-            tris[13] = 12;
-            tris[14] = 7;
+            tris[12] = 11;
+            tris[13] = 10;
+            tris[14] = 9;
 
-            tris[15] = 6;
-            tris[16] = 7;
-            tris[17] = 12;
+            tris[15] = 8;
+            tris[16] = 9;
+            tris[17] = 10;
         }
 
         protected override void FindUVScale()
@@ -46,16 +48,31 @@ namespace GeneratedCuboids
             uvs.Add(new Vector2((x + y) * uvScale, y * uvScale));
             uvs.Add(new Vector2(y * uvScale, (y + z) * uvScale));
             uvs.Add(new Vector2((x + y) * uvScale, (y + z) * uvScale));
+
             uvs.Add(new Vector2(y * uvScale, 0));
             uvs.Add(new Vector2((x + y) * uvScale, 0));
+            uvs.Add(new Vector2(y * uvScale, y * uvScale));
+            uvs.Add(new Vector2((x + y) * uvScale, y * uvScale));
+
             uvs.Add(new Vector2((2 * y + 2 * x) * uvScale, y * uvScale));
             uvs.Add(new Vector2((2 * y + 2 * x) * uvScale, (y + z) * uvScale));
+            uvs.Add(new Vector2((2 * y + x) * uvScale, y * uvScale));
+            uvs.Add(new Vector2((2 * y + x) * uvScale, (y + z) * uvScale));
+
             uvs.Add(new Vector2(y * uvScale, (2 * y + z) * uvScale));
             uvs.Add(new Vector2((x + y) * uvScale, (2 * y + z) * uvScale));
+            uvs.Add(new Vector2(y * uvScale, (y + z) * uvScale));
+            uvs.Add(new Vector2((x + y) * uvScale, (y + z) * uvScale));
+
             uvs.Add(new Vector2(0, y * uvScale));
             uvs.Add(new Vector2(0, (y + z) * uvScale));
+            uvs.Add(new Vector2(y * uvScale, y * uvScale));
+            uvs.Add(new Vector2(y * uvScale, (y + z) * uvScale));
+
             uvs.Add(new Vector2((x + 2 * y) * uvScale, y * uvScale));
             uvs.Add(new Vector2((x + 2 * y) * uvScale, (y + z) * uvScale));
+            uvs.Add(new Vector2((x + y) * uvScale, y * uvScale));
+            uvs.Add(new Vector2((x + y) * uvScale, (y + z) * uvScale));
         }
     }
 }
